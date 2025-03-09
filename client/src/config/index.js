@@ -7,7 +7,7 @@ const signUpFormControls = [
     componentType: "input",
   },
   {
-    name: "email",
+    name: "userEmail",
     label: "Email",
     placeholder: "Enter your Email",
     type: "email",

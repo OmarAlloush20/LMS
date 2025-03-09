@@ -8,7 +8,7 @@ import { signUpFormControls, signInFormControls } from "@/config";
 import { GraduationCap } from "lucide-react";
 import CommonForm from "@/components/common-form";
 import { useState, useContext } from "react";
-import { AuthContext } from "@/context/index";
+import { AuthContext } from "@/context/auth-context/index";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -25,10 +25,27 @@ function AuthPage() {
     setSignInFormData,
     signUpFormData,
     setSignUpFormData,
+    handleRegisterUser,
   } = useContext(AuthContext);
 
   function handleTabChange(value) {
     setActiveTab(value);
+  }
+
+  function checkIfSignInFormValid() {
+    return (
+      signInFormData &&
+      signInFormData.userEmail !== "" &&
+      signInFormData.password !== ""
+    );
+  }
+  function checkIfSignUpFormValid() {
+    return (
+      signUpFormData &&
+      signUpFormData.userName !== "" &&
+      signUpFormData.userEmail !== "" &&
+      signUpFormData.password !== ""
+    );
   }
 
   return (
@@ -64,6 +81,7 @@ function AuthPage() {
                   buttonText={"Sign in"}
                   formData={signInFormData}
                   setFormData={setSignInFormData}
+                  isButtonDisabled={!checkIfSignInFormValid()}
                 />
               </CardContent>
             </Card>
@@ -82,6 +100,8 @@ function AuthPage() {
                   buttonText={"Sign Up"}
                   formData={signUpFormData}
                   setFormData={setSignUpFormData}
+                  isButtonDisabled={!checkIfSignUpFormValid()}
+                  handleSubmit={handleRegisterUser}
                 />
               </CardContent>
             </Card>
