@@ -41,14 +41,22 @@ export default function AuthProvider({ children }) {
 
   // check auth user
   async function checkAuthUser() {
-    const data = await checkAuthService();
+    try {
+      const data = await checkAuthService();
 
-    if (data.success) {
-      setAuth({
-        authenticate: true,
-        user: data.data.user,
-      });
-    } else {
+      if (data.success) {
+        setAuth({
+          authenticate: true,
+          user: data.data.user,
+        });
+      } else {
+        setAuth({
+          authenticate: false,
+          user: null,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to check auth user:", error);
       setAuth({
         authenticate: false,
         user: null,
@@ -71,6 +79,7 @@ export default function AuthProvider({ children }) {
         setSignUpFormData,
         handleRegisterUser,
         handleloginUser,
+        auth,
       }}
     >
       {children}

@@ -6,6 +6,7 @@ const verifyToken = (token, secretKey) => {
 
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(authHeader, "authHeader");
 
   if (!authHeader) {
     return res.status(401).json({
@@ -17,15 +18,17 @@ const authenticate = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const payload = verifyToken(token, process.env.JWT_SECRET);
+    const payload = verifyToken(token, "JWT_SECRET");
+
     req.user = payload;
+
     next();
-  } catch (error) {
+  } catch (e) {
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token",
+      message: "invalid token",
     });
   }
 };
 
-export { authenticate };
+export default authenticate;
