@@ -162,6 +162,15 @@ const courseLandingInitialFormData = {
   image: "",
 };
 
+const courseCurriculumInitialFormData = [
+  {
+    title: "",
+    videoUrl: "",
+    freePreview: false,
+    public_id: "",
+  },
+];
+
 export {
   signUpFormControls,
   signInFormControls,
@@ -172,4 +181,5 @@ export {
   courseCategories,
   courseLandingPageFormControls,
   courseLandingInitialFormData,
+  courseCurriculumInitialFormData,
 };
