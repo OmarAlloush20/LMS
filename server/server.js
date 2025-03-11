@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./Configs/db.js";
 import authRoutes from "./Routes/auth.routes.js";
+import instructorRoutes from "./Routes/instructor.routes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ connectDB(MONGO_URI);
 
 app.use(express.json());
 app.use("/auth", authRoutes);
+app.use("/media", instructorRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);

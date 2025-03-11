@@ -21,4 +21,10 @@ async function checkAuthService() {
   return data;
 }
 
-export { registerService, loginService, checkAuthService };
+async function mediaUploadService(formData) {
+  const { data } = await axiosInstance.post("/media/upload", formData);
+
+  return data;
+}
+
+export { registerService, loginService, checkAuthService, mediaUploadService };
