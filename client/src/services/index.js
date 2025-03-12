@@ -21,8 +21,15 @@ async function checkAuthService() {
   return data;
 }
 
-async function mediaUploadService(formData) {
-  const { data } = await axiosInstance.post("/media/upload", formData);
+async function mediaUploadService(formData, onProgressCallback) {
+  const { data } = await axiosInstance.post("/media/upload", formData, {
+    onUploadProgress: (progressEvent) => {
+      const precentCompleted = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total
+      );
+      onProgressCallback(precentCompleted);
+    },
+  });
 
   return data;
 }
