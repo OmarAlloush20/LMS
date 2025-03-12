@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import VideoPlayer from "@/components/video-player";
 import { courseCurriculumInitialFormData } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
-import { mediaUploadService } from "@/services";
+import { mediaDeleteService, mediaUploadService } from "@/services";
 import { useContext } from "react";
 
 function CourseCarriculum() {
@@ -55,12 +56,9 @@ function CourseCarriculum() {
 
       try {
         setMediaUploadProgress(true);
-        const response = await mediaUploadService(
-          videoFormData,
-          (percent) => {
-            setMediaUploadProgressPercentage(percent); // Update progress
-          }
-        );
+        const response = await mediaUploadService(videoFormData, (percent) => {
+          setMediaUploadProgressPercentage(percent); // Update progress
+        });
 
         if (response.success) {
           let cpycourseCurriculumFormData = [...courseCurriculumFormData];
@@ -78,7 +76,35 @@ function CourseCarriculum() {
     }
   }
 
-  console.log(courseCurriculumFormData);
+  async function handleReplaceVideo(currentIndex) {
+    let cpycourseCurriculumFormData = [...courseCurriculumFormData];
+    const getCurrentVideoPublicId =
+      cpycourseCurriculumFormData[currentIndex].public_id;
+
+    const deleteCurrentMediaResponse = await mediaDeleteService(
+      getCurrentVideoPublicId
+    );
+
+    if (deleteCurrentMediaResponse?.success) {
+      cpycourseCurriculumFormData[currentIndex] = {
+        ...cpycourseCurriculumFormData[currentIndex],
+        videoUrl: "",
+        public_id: "",
+      };
+      setcourseCurriculumFormData(cpycourseCurriculumFormData);
+    }
+  }
+
+  function isCourseCurriculumFormDataValid() {
+    return courseCurriculumFormData.every((item) => {
+      return (
+        item &&
+        typeof item === "object" &&
+        item.title.trim() !== "" &&
+        item.videoUrl.trim() !== ""
+      );
+    });
+  }
 
   return (
     <Card>
@@ -86,7 +112,12 @@ function CourseCarriculum() {
         <CardTitle>Create Course Carriculum</CardTitle>
       </CardHeader>
       <CardContent>
-        <Button onClick={handleNewLecture}>Add Lecture</Button>
+        <Button
+          disabled={!isCourseCurriculumFormDataValid() || mediaUploadProgress}
+          onClick={handleNewLecture}
+        >
+          Add Lecture
+        </Button>
         {mediaUploadProgress ? (
           <MediaProgressBar
             isMediaUploading={mediaUploadProgress}
@@ -119,12 +150,28 @@ function CourseCarriculum() {
                 </div>
               </div>
               <div className="mt-6">
-                <Input
-                  type="file"
-                  accept="video/*"
-                  onChange={(event) => handleSingleLectureUpload(event, index)}
-                  className="mb-4"
-                />
+                {courseCurriculumFormData[index]?.videoUrl ? (
+                  <div className="flex gap-3">
+                    <VideoPlayer
+                      url={courseCurriculumFormData[index]?.videoUrl}
+                      width="450px"
+                      height="200px"
+                    />
+                    <Button onClick={() => handleReplaceVideo(index)}>
+                      Replace Video
+                    </Button>
+                    <Button className="bg-red-900">Delete Lecture</Button>
+                  </div>
+                ) : (
+                  <Input
+                    type="file"
+                    accept="video/*"
+                    onChange={(event) =>
+                      handleSingleLectureUpload(event, index)
+                    }
+                    className="mb-4"
+                  />
+                )}
               </div>
             </div>
           ))}
