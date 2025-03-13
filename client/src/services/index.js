@@ -53,7 +53,9 @@ async function addNewCourseService(formData) {
 }
 
 async function fetchInstructorCourseDetailsService(id) {
-  const { data } = await axiosInstance.get(`/instructor/course/get/details/${id}`);
+  const { data } = await axiosInstance.get(
+    `/instructor/course/get/details/${id}`
+  );
 
   return data;
 }
@@ -66,6 +68,20 @@ async function updateCourseByIdService(id, formData) {
 
   return data;
 }
+
+async function mediaBulkUploadService(formData, onProgressCallback) {
+  const { data } = await axiosInstance.post("/media/bulk-upload", formData, {
+    onUploadProgress: (progressEvent) => {
+      const precentCompleted = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total
+      );
+      onProgressCallback(precentCompleted);
+    },
+  });
+
+  return data;
+}
+
 export {
   registerService,
   loginService,
@@ -76,4 +92,5 @@ export {
   addNewCourseService,
   fetchInstructorCourseDetailsService,
   updateCourseByIdService,
+  mediaBulkUploadService,
 };
