@@ -14,7 +14,8 @@ const CourseSchema = new mongoose.Schema({
   title: String,
   category: String,
   level: String,
-  language: String,
+  primaryLanguage: String,
+  subtitle: String,
   description: String,
   image: String,
   welcomeMessage: String,
@@ -25,10 +26,11 @@ const CourseSchema = new mongoose.Schema({
       studentId: String,
       studentName: String,
       studentEmail: String,
+      paidAmount: String,
     },
   ],
   curriculum: [LectureSchema],
-  isPublished: Boolean,
+  isPublised: Boolean,
 });
 
 export default mongoose.model("Course", CourseSchema);
