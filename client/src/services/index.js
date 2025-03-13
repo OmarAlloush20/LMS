@@ -40,10 +40,40 @@ async function mediaDeleteService(id) {
   return data;
 }
 
+async function fetchInstructorCourseListService() {
+  const { data } = await axiosInstance.get(`/instructor/course/get`);
+
+  return data;
+}
+
+async function addNewCourseService(formData) {
+  const { data } = await axiosInstance.post(`/instructor/course/add`, formData);
+
+  return data;
+}
+
+async function fetchInstructorCourseDetailsService(id) {
+  const { data } = await axiosInstance.get(`/instructor/course/details/${id}`);
+
+  return data;
+}
+
+async function updateCourseByIdService(id, formData) {
+  const { data } = await axiosInstance.put(
+    `/instructor/course/update/${id}`,
+    formData
+  );
+
+  return data;
+}
 export {
   registerService,
   loginService,
   checkAuthService,
   mediaUploadService,
   mediaDeleteService,
+  fetchInstructorCourseListService,
+  addNewCourseService,
+  fetchInstructorCourseDetailsService,
+  updateCourseByIdService,
 };
