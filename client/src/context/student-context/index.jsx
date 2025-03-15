@@ -3,11 +3,11 @@ import { createContext, useState } from "react";
 export const StudentContext = createContext(null);
 
 export default function StudentProvider({ children }) {
-  const [studentViewCourses, setStudentViewCoursesList] = useState([]);
+  const [studentViewCoursesList, setStudentViewCoursesList] = useState([]);
 
   return (
     <StudentContext.Provider
-      value={(studentViewCourses, setStudentViewCoursesList)}
+      value={{ studentViewCoursesList, setStudentViewCoursesList }}
     >
       {children}
     </StudentContext.Provider>

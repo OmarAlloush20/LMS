@@ -1,5 +1,6 @@
-import express from "express";
 import Course from "../Models/Course.js";
+
+// course view
 
 const getAllStudentViewCourses = async (req, res) => {
   try {

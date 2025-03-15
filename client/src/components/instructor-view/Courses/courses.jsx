@@ -60,7 +60,7 @@ function InstructorCourses({ listOfCourses }) {
                         {course?.title}
                       </TableCell>
                       <TableCell>{course?.students?.length}</TableCell>
-                      <TableCell>${course?.pricing}</TableCell>
+                      <TableCell>{course?.pricing}$</TableCell>
                       <TableCell className="text-right">
                         <Button
                           onClick={() => {
