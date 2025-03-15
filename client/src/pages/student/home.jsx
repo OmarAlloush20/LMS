@@ -67,7 +67,10 @@ function StudentHomePage() {
                 <div className="p-4">
                   <h3 className="font-bold mb-2">{courseItem?.title}</h3>
                   <p className="text-sm text-gray-700 mb-2">
-                    {courseItem?.instructorName}
+                    Created By{" "}
+                    <span className="font-bold">
+                      {courseItem?.instructorName}
+                    </span>
                   </p>
                   <p className="font-bold text-[16px]">
                     {courseItem?.pricing}$
