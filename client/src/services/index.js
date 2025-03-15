@@ -82,6 +82,20 @@ async function mediaBulkUploadService(formData, onProgressCallback) {
   return data;
 }
 
+async function fetchStudentCourseListService() {
+  const { data } = await axiosInstance.get(`/student/course/get`);
+
+  return data;
+}
+
+async function fetchStudentCourseDetailsService(courseId) {
+  const { data } = await axiosInstance.get(
+    `/student/course/get/details/${courseId}`
+  );
+
+  return data;
+}
+
 export {
   registerService,
   loginService,
@@ -93,4 +107,6 @@ export {
   fetchInstructorCourseDetailsService,
   updateCourseByIdService,
   mediaBulkUploadService,
+  fetchStudentCourseListService,
+  fetchStudentCourseDetailsService,
 };

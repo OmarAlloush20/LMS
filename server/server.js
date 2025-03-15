@@ -5,6 +5,7 @@ import connectDB from "./Configs/db.js";
 import authRoutes from "./Routes/auth.routes.js";
 import mediaRoutes from "./Routes/instructor.routes.js";
 import instructorCourseRoutes from "./Routes/course.routes.js";
+import StudentViewCourseRoutes from "./Routes/student.routes.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/media", mediaRoutes);
 app.use("/instructor/course", instructorCourseRoutes);
+app.use("/student/course", StudentViewCourseRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
