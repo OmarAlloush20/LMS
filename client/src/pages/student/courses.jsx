@@ -15,7 +15,7 @@ import { StudentContext } from "@/context/student-context";
 import { fetchStudentCourseListService } from "@/services";
 import { ArrowUpDown } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -39,6 +39,8 @@ function StudentViewCoursesPage() {
     loadingState,
     setLoadingState,
   } = useContext(StudentContext);
+
+  const navigate = useNavigate();
 
   function handleFilterOnChange(getSectionId, getCurrentOption) {
     let cpyFilters = { ...filters };
@@ -168,7 +170,11 @@ function StudentViewCoursesPage() {
           <div className="space-y-4">
             {studentViewCoursesList && studentViewCoursesList.length > 0 ? (
               studentViewCoursesList.map((courseItem) => (
-                <Card className="cursor-pointer" key={courseItem?._id}>
+                <Card
+                  onClick={() => navigate(`/course/details/${courseItem._id}`)}
+                  className="cursor-pointer"
+                  key={courseItem?._id}
+                >
                   <CardContent className="flex gap-4 p-4">
                     <div className="w-48 h-32 flex-shrink-0">
                       <img
