@@ -96,6 +96,19 @@ async function fetchStudentCourseDetailsService(courseId) {
   return data;
 }
 
+async function createPaymentService(formData) {
+  const { data } = await axiosInstance.post("/student/order/create", formData);
+  return data;
+}
+
+async function captureAndFinalizePaymentService(sessionId, orderId) {
+  const { data } = await axiosInstance.post("/student/order/capture", {
+    sessionId,
+    orderId,
+  });
+  return data;
+}
+
 export {
   registerService,
   loginService,
@@ -109,4 +122,6 @@ export {
   mediaBulkUploadService,
   fetchStudentCourseListService,
   fetchStudentCourseDetailsService,
+  createPaymentService,
+  captureAndFinalizePaymentService,
 };

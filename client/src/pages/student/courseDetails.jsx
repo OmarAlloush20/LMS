@@ -10,8 +10,12 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayer from "@/components/video-player";
+import { AuthContext } from "@/context/auth-context";
 import { StudentContext } from "@/context/student-context";
-import { fetchInstructorCourseDetailsService } from "@/services";
+import {
+  createPaymentService,
+  fetchInstructorCourseDetailsService,
+} from "@/services";
 import { CheckCircle, Globe, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
@@ -25,6 +29,9 @@ function StudentViewCourseDetailsPage() {
     loadingState,
     setLoadingState,
   } = useContext(StudentContext);
+
+  const { auth } = useContext(AuthContext);
+
   const [displayCurrentVideoFreePreview, setDisplayCurrentVideoFreePreview] =
     useState(null);
   const [showFreePreviewDialog, setShowFreePreviewDialog] = useState(null);
@@ -50,16 +57,52 @@ function StudentViewCourseDetailsPage() {
     setDisplayCurrentVideoFreePreview(getCurrentVideInfo?.videoUrl);
   }
 
+  async function handleCreatePayment() {
+    const paymentPayload = {
+      userId: auth?.user?._id,
+      userName: auth?.user?.userName,
+      userEmail: auth?.user?.userEmail,
+      orderStatus: "pending",
+      paymentMethod: "stripe", // Changed from paypal to stripe
+      paymentStatus: "initiated",
+      orderDate: new Date(),
+      paymentId: "",
+      payerId: "",
+      instructorId: studentViewCourseDetails?.instructorId,
+      instructorName: studentViewCourseDetails?.instructorName,
+      courseImage: studentViewCourseDetails?.image,
+      courseTitle: studentViewCourseDetails?.title,
+      courseId: studentViewCourseDetails?._id,
+      coursePricing: studentViewCourseDetails?.pricing,
+    };
+
+    console.log(paymentPayload, "paymentPayload");
+    const response = await createPaymentService(paymentPayload);
+
+    if (response.success) {
+      // Store the orderId in session storage for later use
+      sessionStorage.setItem(
+        "currentOrderId",
+        JSON.stringify(response?.data?.orderId)
+      );
+
+      // Redirect to Stripe Checkout
+      window.location.href = response?.data?.checkoutUrl;
+    }
+  }
+
   useEffect(() => {
     if (displayCurrentVideoFreePreview !== null) setShowFreePreviewDialog(true);
   }, [displayCurrentVideoFreePreview]);
 
   useEffect(() => {
-    if (currentCourseDetailsId !== null) fetchStudentViewCourseDetails();
+    if (currentCourseDetailsId) fetchStudentViewCourseDetails();
   }, [currentCourseDetailsId]);
 
   useEffect(() => {
-    if (id) setCurrentCourseDetailsId(id);
+    if (id) {
+      setCurrentCourseDetailsId(id);
+    }
   }, [id]);
 
   useEffect(() => {
@@ -175,7 +218,9 @@ function StudentViewCourseDetailsPage() {
                   {studentViewCourseDetails?.pricing}$
                 </span>
               </div>
-              <Button className="w-full">Buy Now</Button>
+              <Button onClick={handleCreatePayment} className="w-full">
+                Buy Now
+              </Button>
             </CardContent>
           </Card>
         </aside>

@@ -13,7 +13,7 @@ const addNewCourse = async (req, res) => {
         data: saveCourse,
       });
     }
-  } catch (e) {
+  } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
@@ -30,7 +30,7 @@ const getAllCourses = async (req, res) => {
       success: true,
       data: courseList,
     });
-  } catch (e) {
+  } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
@@ -54,7 +54,7 @@ const getCourseDetailsByID = async (req, res) => {
       success: true,
       data: courseDetails,
     });
-  } catch (e) {
+  } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
@@ -85,7 +85,7 @@ const updateCourseByID = async (req, res) => {
       message: "Course Updated Successfully",
       data: updatedCourse,
     });
-  } catch (e) {
+  } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
