@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/add", addNewCourse);
 router.get("/get", getAllCourses);
-router.get("/get/details/:id", getCourseDetailsByID);
+router.get("/get/details/:id/:studentId", getCourseDetailsByID);
 router.put("/update/:id", updateCourseByID);
 
 export default router;

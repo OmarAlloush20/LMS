@@ -14,11 +14,11 @@ import { AuthContext } from "@/context/auth-context";
 import { StudentContext } from "@/context/student-context";
 import {
   createPaymentService,
-  fetchInstructorCourseDetailsService,
+  fetchStudentCourseDetailsService,
 } from "@/services";
 import { CheckCircle, Globe, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 
 function StudentViewCourseDetailsPage() {
   const {
@@ -35,20 +35,24 @@ function StudentViewCourseDetailsPage() {
   const [displayCurrentVideoFreePreview, setDisplayCurrentVideoFreePreview] =
     useState(null);
   const [showFreePreviewDialog, setShowFreePreviewDialog] = useState(null);
+  const [coursePurchaseId, setCoursePurchaseId] = useState(null);
 
   const { id } = useParams();
   const location = useLocation();
 
   async function fetchStudentViewCourseDetails() {
-    const response = await fetchInstructorCourseDetailsService(
-      currentCourseDetailsId
+    const response = await fetchStudentCourseDetailsService(
+      currentCourseDetailsId,
+      auth?.user?._id
     );
 
     if (response?.success) {
       setStudentViewCourseDetails(response?.data);
+      setCoursePurchaseId(response?.coursePurchaseId);
       setLoadingState(false);
     } else {
       setStudentViewCourseDetails(null);
+      setCoursePurchaseId(false);
       setLoadingState(false);
     }
   }
@@ -111,6 +115,10 @@ function StudentViewCourseDetailsPage() {
   }, [location.pathname]);
 
   if (loadingState) return <Skeleton />;
+
+  if (coursePurchaseId !== null) {
+    return <Navigate to={`/course-progress/${coursePurchaseId}`} />;
+  }
 
   const getIndexOfFreePreviewUrl =
     studentViewCourseDetails !== null

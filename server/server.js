@@ -7,6 +7,7 @@ import mediaRoutes from "./Routes/instructor.routes.js";
 import instructorCourseRoutes from "./Routes/course.routes.js";
 import StudentViewCourseRoutes from "./Routes/student.routes.js";
 import StudentViewOrderRoutes from "./Routes/orders.routes.js";
+import studentCoursesRoutes from "./Routes/studentCourses.routes.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/media", mediaRoutes);
 app.use("/instructor/course", instructorCourseRoutes);
 app.use("/student/course", StudentViewCourseRoutes);
 app.use("/student/order", StudentViewOrderRoutes);
+app.use("/student/courses-bought", studentCoursesRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);

@@ -1,4 +1,5 @@
 import Course from "../Models/Course.js";
+import StudentCourses from "../Models/StudentCourses.js";
 
 // course view
 
@@ -11,7 +12,6 @@ const getAllStudentViewCourses = async (req, res) => {
       primaryLanguage = [],
       sortBy = "price-lowtohigh",
     } = req.query;
- 
 
     let filters = {};
     if (category.length) {
@@ -63,7 +63,7 @@ const getAllStudentViewCourses = async (req, res) => {
 
 const getStudentViewCourseDetails = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, studentId } = req.params;
     const courseDetails = await Course.findById(id);
 
     if (!courseDetails) {
@@ -74,9 +74,20 @@ const getStudentViewCourseDetails = async (req, res) => {
       });
     }
 
+    // check if the current student parchased this course
+    const studentCourses = await StudentCourses.findOne({
+      userId: studentId,
+    });
+
+    const ifStudenetAlreadyBoughtCurrentCourse =
+      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
+
+    console.log(ifStudenetAlreadyBoughtCurrentCourse);
+
     res.status(200).json({
       success: true,
       data: courseDetails,
+      coursePurchaseId: ifStudenetAlreadyBoughtCurrentCourse ? id : null,
     });
   } catch (e) {
     console.log(e);
