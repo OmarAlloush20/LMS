@@ -16,6 +16,10 @@ import {
   courseCurriculumInitialFormData,
   courseLandingInitialFormData,
 } from "@/config";
+import {
+  deleteCourseByIdService,
+  fetchInstructorCourseListService,
+} from "@/services";
 
 function InstructorCourses({ listOfCourses }) {
   const navigate = useNavigate();
@@ -24,6 +28,22 @@ function InstructorCourses({ listOfCourses }) {
     setCourseLandingFormData,
     setCourseCurriculumFormData,
   } = useContext(InstructorContext);
+
+  const handleDeleteCourse = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this course?")) return;
+
+    try {
+      await deleteCourseByIdService(id);
+      alert("Course deleted successfully!");
+
+      // Refresh course list
+      const updatedCourses = await fetchInstructorCourseListService();
+      setCourseLandingFormData(updatedCourses);
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      alert("Failed to delete course");
+    }
+  };
 
   return (
     <Card>
@@ -60,7 +80,9 @@ function InstructorCourses({ listOfCourses }) {
                         {course?.title}
                       </TableCell>
                       <TableCell>{course?.students?.length}</TableCell>
-                      <TableCell>{course?.pricing}$</TableCell>
+                      <TableCell>
+                        {course?.students?.length * course?.pricing}$
+                      </TableCell>
                       <TableCell className="text-right">
                         <Button
                           onClick={() => {
@@ -71,7 +93,11 @@ function InstructorCourses({ listOfCourses }) {
                         >
                           <Edit className="h-6 w-6" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          onClick={() => handleDeleteCourse(course?._id)}
+                          variant="ghost"
+                          size="sm"
+                        >
                           <Delete className="h-6 w-6" />
                         </Button>
                       </TableCell>

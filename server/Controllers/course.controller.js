@@ -1,4 +1,5 @@
 import Course from "../Models/Course.js";
+import { deleteMediaFromCloudinary } from "../Helpers/cloudinary.js";
 
 const addNewCourse = async (req, res) => {
   try {
@@ -94,4 +95,38 @@ const updateCourseByID = async (req, res) => {
   }
 };
 
-export { addNewCourse, getAllCourses, getCourseDetailsByID, updateCourseByID };
+const deleteCourseByID = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const course = await Course.findById(id);
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course not found" });
+    }
+
+    // Delete video from Cloudinary if exists
+    if (course.videoId) {
+      await deleteMediaFromCloudinary(course.videoId);
+    }
+
+    // Delete course from database
+    await Course.findByIdAndDelete(id);
+
+    res
+      .status(200)
+      .json({ success: true, message: "Course deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).json({ success: false, message: "Error deleting course" });
+  }
+};
+
+export {
+  addNewCourse,
+  getAllCourses,
+  getCourseDetailsByID,
+  updateCourseByID,
+  deleteCourseByID,
+};

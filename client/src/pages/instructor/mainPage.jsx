@@ -29,7 +29,7 @@ function InstructorDashboardPage() {
       icon: BarChart,
       label: "Dashboard",
       vlaue: "dashboard",
-      component: <InstructorDashboard />,
+      component: <InstructorDashboard listOfCourses={instructorCoursesList} />,
     },
     {
       icon: Book,

@@ -99,7 +99,8 @@ function AddNewCoursePage() {
 
   async function fetchCurrentCourseDetails() {
     const response = await fetchInstructorCourseDetailsService(
-      currentEditedCourseId
+      currentEditedCourseId,
+      auth?.user?._id || "defaultStudentId"
     );
 
     if (response?.success) {

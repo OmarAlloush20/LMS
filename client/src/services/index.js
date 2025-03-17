@@ -52,9 +52,12 @@ async function addNewCourseService(formData) {
   return data;
 }
 
-async function fetchInstructorCourseDetailsService(id) {
+async function fetchInstructorCourseDetailsService(
+  id,
+  studentId = "defaultStudentId"
+) {
   const { data } = await axiosInstance.get(
-    `/instructor/course/get/details/${id}`
+    `/instructor/course/get/details/${id}/${studentId}`
   );
 
   return data;
@@ -66,6 +69,13 @@ async function updateCourseByIdService(id, formData) {
     formData
   );
 
+  return data;
+}
+
+async function deleteCourseByIdService(id) {
+  const { data } = await axiosInstance.delete(
+    `/instructor/course/delete/${id}`
+  );
   return data;
 }
 
@@ -88,9 +98,17 @@ async function fetchStudentCourseListService(query) {
   return data;
 }
 
-async function fetchStudentCourseDetailsService(courseId, studentId) {
+async function fetchStudentCourseDetailsService(courseId) {
   const { data } = await axiosInstance.get(
-    `/student/course/get/details/${courseId}/${studentId}`
+    `/student/course/get/details/${courseId}`
+  );
+
+  return data;
+}
+
+async function checkCoursePurchaseInfoService(courseId, studentId) {
+  const { data } = await axiosInstance.get(
+    `/student/course/purchase-info/${courseId}/${studentId}`
   );
 
   return data;
@@ -117,6 +135,38 @@ async function fetchStudentBoughtCoursesService(studentId) {
   return data;
 }
 
+async function getCurrentCourseProgressService(userId, courseId) {
+  const { data } = await axiosInstance.get(
+    `/student/course-progress/get/${userId}/${courseId}`
+  );
+
+  return data;
+}
+
+async function markLectureAsViewedService(userId, courseId, lectureId) {
+  const { data } = await axiosInstance.post(
+    `/student/course-progress/mark-lecture-viewed`,
+    {
+      userId,
+      courseId,
+      lectureId,
+    }
+  );
+
+  return data;
+}
+
+async function resetCourseProgressService(userId, courseId) {
+  const { data } = await axiosInstance.post(
+    `/student/course-progress/reset-progress`,
+    {
+      userId,
+      courseId,
+    }
+  );
+
+  return data;
+}
 export {
   registerService,
   loginService,
@@ -127,10 +177,15 @@ export {
   addNewCourseService,
   fetchInstructorCourseDetailsService,
   updateCourseByIdService,
+  deleteCourseByIdService,
   mediaBulkUploadService,
   fetchStudentCourseListService,
   fetchStudentCourseDetailsService,
   createPaymentService,
   captureAndFinalizePaymentService,
   fetchStudentBoughtCoursesService,
+  checkCoursePurchaseInfoService,
+  getCurrentCourseProgressService,
+  markLectureAsViewedService,
+  resetCourseProgressService,
 };

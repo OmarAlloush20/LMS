@@ -5,13 +5,14 @@ import { StudentContext } from "@/context/student-context";
 import { fetchStudentBoughtCoursesService } from "@/services";
 import { Watch } from "lucide-react";
 import { useContext, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function StudentCoursesPage() {
   const { auth } = useContext(AuthContext);
 
   const { studentBoughtCoursesList, setStudentBoughtCoursesList } =
     useContext(StudentContext);
+  const naviagate = useNavigate();
 
   async function fetchStudentBoughtCourses() {
     const response = await fetchStudentBoughtCoursesService(auth?.user?._id);
@@ -46,7 +47,7 @@ function StudentCoursesPage() {
               <CardFooter>
                 <Button
                   onClick={() =>
-                    Navigate(`/course-progress/${course?.courseId}`)
+                    naviagate(`/course-progress/${course?.courseId}`)
                   }
                   className="flex-1"
                 >

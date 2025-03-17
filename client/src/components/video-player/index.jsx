@@ -13,7 +13,13 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 
-function VideoPlayer({ width = "100%", height = "100", url }) {
+function VideoPlayer({
+  width = "100%",
+  height = "100%",
+  url,
+  onProgressUpdate,
+  progressData,
+}) {
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [muted, setMuted] = useState(false);
@@ -43,13 +49,16 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
   function handleForward() {
     playerRef?.current?.seekTo(playerRef?.current?.getCurrentTime() + 5);
   }
+
   function handleToggleMute() {
     setMuted(!muted);
   }
+
   function handleSeekChange(newValue) {
     setPlayed(newValue[0]);
     setSeeking(true);
   }
+
   function handleSeekMouseUp() {
     setSeeking(false);
     playerRef.current?.seekTo(played);
@@ -72,6 +81,7 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
     if (hh) {
       return `${hh}:${pad(mm)}:${ss}`;
     }
+
     return `${mm}:${ss}`;
   }
 
@@ -97,18 +107,29 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
     const handleFullScreenChange = () => {
       setIsFullScreen(document.fullscreenElement);
     };
+
     document.addEventListener("fullscreenchange", handleFullScreenChange);
+
     return () => {
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
     };
   }, []);
 
+  useEffect(() => {
+    if (played === 1) {
+      onProgressUpdate({
+        ...progressData,
+        progressValue: played,
+      });
+    }
+  }, [played]);
+
   return (
     <div
       ref={playerContainerRef}
-      className={`relative bg-gray-900 rounded-lg overflow-hidden shadow-2xl transition-all duration-300 ease-in-out
-    ${isFullScreen ? "w-screen h-screen" : ""}
-    `}
+      className={`relative bg-gray-900 rounded-lg overflow-hidden shadow-2xl transition-all duration-300 ease-in-out 
+      ${isFullScreen ? "w-screen h-screen" : ""}
+      `}
       style={{ width, height }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setShowControls(false)}
@@ -116,8 +137,8 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
       <ReactPlayer
         ref={playerRef}
         className="absolute top-0 left-0"
-        width={"100%"}
-        height={"100%"}
+        width="100%"
+        height="100%"
         url={url}
         playing={playing}
         volume={volume}
@@ -131,7 +152,7 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
           }`}
         >
           <Slider
-            vlaue={[played * 100]}
+            value={[played * 100]}
             max={100}
             step={0.1}
             onValueChange={(value) => handleSeekChange([value[0] / 100])}
@@ -154,25 +175,25 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
               </Button>
               <Button
                 onClick={handleRewind}
+                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
                 variant="ghost"
                 size="icon"
-                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
               >
                 <RotateCcw className="h-6 w-6" />
               </Button>
               <Button
                 onClick={handleForward}
+                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
                 variant="ghost"
                 size="icon"
-                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
               >
                 <RotateCw className="h-6 w-6" />
               </Button>
               <Button
                 onClick={handleToggleMute}
+                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
                 variant="ghost"
                 size="icon"
-                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
               >
                 {muted ? (
                   <VolumeX className="h-6 w-6" />
@@ -185,18 +206,18 @@ function VideoPlayer({ width = "100%", height = "100", url }) {
                 max={100}
                 step={1}
                 onValueChange={(value) => handleVolumeChange([value[0] / 100])}
-                className="w-24"
+                className="w-24 "
               />
             </div>
-            <div className="frlx items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <div className="text-white">
                 {formatTime(played * (playerRef?.current?.getDuration() || 0))}/{" "}
                 {formatTime(playerRef?.current?.getDuration() || 0)}
               </div>
               <Button
+                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
                 variant="ghost"
                 size="icon"
-                className="text-white bg-transparent hover:text-white hover:bg-gray-700"
                 onClick={handleFullScreen}
               >
                 {isFullScreen ? (

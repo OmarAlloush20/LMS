@@ -13,12 +13,13 @@ import VideoPlayer from "@/components/video-player";
 import { AuthContext } from "@/context/auth-context";
 import { StudentContext } from "@/context/student-context";
 import {
+  checkCoursePurchaseInfoService,
   createPaymentService,
   fetchStudentCourseDetailsService,
 } from "@/services";
 import { CheckCircle, Globe, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { Navigate, useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function StudentViewCourseDetailsPage() {
   const {
@@ -35,24 +36,36 @@ function StudentViewCourseDetailsPage() {
   const [displayCurrentVideoFreePreview, setDisplayCurrentVideoFreePreview] =
     useState(null);
   const [showFreePreviewDialog, setShowFreePreviewDialog] = useState(null);
-  const [coursePurchaseId, setCoursePurchaseId] = useState(null);
+
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const location = useLocation();
 
   async function fetchStudentViewCourseDetails() {
+    const checkCoursePurchaseInfoResponse =
+      await checkCoursePurchaseInfoService(
+        currentCourseDetailsId,
+        auth?.user._id
+      );
+
+    if (
+      checkCoursePurchaseInfoResponse?.success &&
+      checkCoursePurchaseInfoResponse?.data
+    ) {
+      navigate(`/course-progress/${currentCourseDetailsId}`);
+      return;
+    }
+
     const response = await fetchStudentCourseDetailsService(
-      currentCourseDetailsId,
-      auth?.user?._id
+      currentCourseDetailsId
     );
 
     if (response?.success) {
       setStudentViewCourseDetails(response?.data);
-      setCoursePurchaseId(response?.coursePurchaseId);
       setLoadingState(false);
     } else {
       setStudentViewCourseDetails(null);
-      setCoursePurchaseId(false);
       setLoadingState(false);
     }
   }
@@ -110,15 +123,12 @@ function StudentViewCourseDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    if (!location.pathname.includes("/course/details"))
+    if (!location.pathname.includes("/course/details")) {
       setStudentViewCourseDetails(null), setCurrentCourseDetailsId(null);
+    }
   }, [location.pathname]);
 
   if (loadingState) return <Skeleton />;
-
-  if (coursePurchaseId !== null) {
-    return <Navigate to={`/course-progress/${coursePurchaseId}`} />;
-  }
 
   const getIndexOfFreePreviewUrl =
     studentViewCourseDetails !== null

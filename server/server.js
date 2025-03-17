@@ -8,6 +8,7 @@ import instructorCourseRoutes from "./Routes/course.routes.js";
 import StudentViewCourseRoutes from "./Routes/student.routes.js";
 import StudentViewOrderRoutes from "./Routes/orders.routes.js";
 import studentCoursesRoutes from "./Routes/studentCourses.routes.js";
+import studentCourseProgressRoutes from "./Routes/courseProgress.routes.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/instructor/course", instructorCourseRoutes);
 app.use("/student/course", StudentViewCourseRoutes);
 app.use("/student/order", StudentViewOrderRoutes);
 app.use("/student/courses-bought", studentCoursesRoutes);
+app.use("/student/course-progress", studentCourseProgressRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
