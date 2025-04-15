@@ -17,7 +17,7 @@ import {
   createPaymentService,
   fetchStudentCourseDetailsService,
 } from "@/services";
-import { CheckCircle, Globe, PlayCircle } from "lucide-react";
+import { CheckCircle, Globe, Lock, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
