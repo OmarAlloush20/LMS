@@ -12,63 +12,97 @@ export default function AuthProvider({ children }) {
     authenticate: false,
     user: null,
   });
-
   const [loading, setLoading] = useState(true);
 
   async function handleRegisterUser(e) {
     e.preventDefault();
-    const data = await registerService(signUpFormData);
-    console.log(data);
+    try {
+      const data = await registerService(signUpFormData);
+      if (data.success) {
+        return {
+          success: true,
+          message:
+            data.message || "User registered successfully! Please sign in.",
+        };
+      } else {
+        return {
+          success: false,
+          message:
+            data.message || "Registration failed. Email may already exist.",
+        };
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      return {
+        success: false,
+        message:
+          error?.response?.data?.message ||
+          "Registration failed. Please try again.",
+      };
+    }
   }
 
   async function handleloginUser(e) {
     e.preventDefault();
-    const data = await loginService(signInFormData);
-
-    if (data.success) {
-      sessionStorage.setItem(
-        "accessToken",
-        JSON.stringify(data.data.accessToken)
-      );
-      setAuth({
-        authenticate: true,
-        user: data.data.user,
-      });
-    } else {
-      setAuth({
-        authenticate: false,
-        user: null,
-      });
-    }
-  }
-
-  // check auth user
-  async function checkAuthUser() {
     try {
-      const data = await checkAuthService();
-
+      const data = await loginService(signInFormData);
       if (data.success) {
+        sessionStorage.setItem(
+          "accessToken",
+          JSON.stringify(data.data.accessToken)
+        );
         setAuth({
           authenticate: true,
           user: data.data.user,
         });
-        setLoading(false);
+        return { success: true, message: "Login successful" };
       } else {
         setAuth({
           authenticate: false,
           user: null,
         });
-        setLoading(false);
+        return {
+          success: false,
+          message: data.message || "Invalid email or password",
+        };
       }
     } catch (error) {
-      console.log(error);
-      if (!error?.response?.data?.success) {
+      console.error("Login error:", error);
+      setAuth({
+        authenticate: false,
+        user: null,
+      });
+      return {
+        success: false,
+        message:
+          error?.response?.data?.message ||
+          "Login failed. Please check your credentials.",
+      };
+    }
+  }
+
+  async function checkAuthUser() {
+    try {
+      const data = await checkAuthService();
+      if (data.success) {
+        setAuth({
+          authenticate: true,
+          user: data.data.user,
+        });
+      } else {
         setAuth({
           authenticate: false,
           user: null,
         });
-        setLoading(false);
       }
+    } catch (error) {
+      console.error("Check auth error:", error);
+      setAuth({
+        authenticate: false,
+        user: null,
+      });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -77,6 +111,7 @@ export default function AuthProvider({ children }) {
       authenticate: false,
       user: null,
     });
+    sessionStorage.removeItem("accessToken");
   }
 
   useEffect(() => {
@@ -96,7 +131,7 @@ export default function AuthProvider({ children }) {
         resetCredentials,
       }}
     >
-      {loading ? <Skeleton /> : children}
+      {loading ? <Skeleton className="w-full h-screen" /> : children}
     </AuthContext.Provider>
   );
 }
